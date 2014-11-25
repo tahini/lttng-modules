@@ -7,6 +7,8 @@ ifneq ($(CONFIG_TRACEPOINTS),)
 
 ccflags-y += -I$(PWD)/addons
 
+obj-$(CONFIG_LTTNG) += lttng-probe-addons.o
+
 endif
 
 else
