@@ -25,12 +25,13 @@
 #include <linux/hrtimer.h>
 #include <linux/random.h>
 #include <linux/time.h>
+#include <lttng-tracer.h>
 
-#include "../wrapper/tracepoint.h"
-#include "../lttng-abi.h"
+//#include "../wrapper/tracepoint.h"
+//#include "../lttng-abi.h"
 #define LTTNG_INSTRUMENTATION
-#include "../instrumentation/events/lttng-module/addons.h"
-#include "../wrapper/tracepoint.h"
+#include <instrumentation/events/lttng-module/addons.h>
+#include <wrapper/tracepoint.h>
 
 #include "lttng-vmsync.h"
 
@@ -109,3 +110,7 @@ module_exit(lttng_addons_vmsync_exit);
 MODULE_LICENSE("GPL and additional rights");
 MODULE_AUTHOR("Mohamad Gebai <mohamad.gebai@polymtl.ca>");
 MODULE_DESCRIPTION("LTTng vmsync guest events");
+MODULE_VERSION(__stringify(LTTNG_MODULES_MAJOR_VERSION) "."
+	__stringify(LTTNG_MODULES_MINOR_VERSION) "."
+	__stringify(LTTNG_MODULES_PATCHLEVEL_VERSION)
+	LTTNG_MODULES_EXTRAVERSION);

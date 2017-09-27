@@ -23,14 +23,15 @@
 #include <linux/module.h>
 #include <linux/printk.h>
 #include <asm/ptrace.h>
-
+#include <lttng-tracer.h>
 #include <linux/list.h>
+#include <linux/slab.h>
 
-#include "../wrapper/tracepoint.h"
+#include <wrapper/tracepoint.h>
 #include "../wrapper/kallsyms.h"
 #include "../lttng-abi.h"
 #define LTTNG_INSTRUMENTATION
-#include "../instrumentation/events/lttng-module/addons.h"
+#include <instrumentation/events/lttng-module/addons.h>
 
 #include "lttng-vmsync.h"
 
@@ -164,3 +165,7 @@ MODULE_LICENSE("GPL and additional rights");
 MODULE_AUTHOR("Mohamad Gebai <mohamad.gebai@polymtl.ca>"
 		"Francis Giraldeau <francis.giraldeau@gmail.com>");
 MODULE_DESCRIPTION("LTTng vmsync host events");
+MODULE_VERSION(__stringify(LTTNG_MODULES_MAJOR_VERSION) "."
+	__stringify(LTTNG_MODULES_MINOR_VERSION) "."
+	__stringify(LTTNG_MODULES_PATCHLEVEL_VERSION)
+	LTTNG_MODULES_EXTRAVERSION);

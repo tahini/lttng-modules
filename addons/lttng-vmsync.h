@@ -2,7 +2,7 @@
  * lttng-vmsync.h
  *
  *  Created on: Jan 27, 2014
- *      Author: francis
+ *      Author: Francis Giraldeau
  */
 
 #ifndef LTTNG_VMSYNC_H_
