@@ -2776,8 +2776,8 @@ int _lttng_session_metadata_statedump(struct lttng_session *session)
 	/* Add the product UUID to the 'env' section */
 	product_uuid = dmi_get_system_info(DMI_PRODUCT_UUID);
 	if (product_uuid) {
-		ret = lttng_metadata_printf(session,
-				"	product_uuid = \"%s\";\n",
+		ret = print_metadata_escaped_field(session,
+				"product_uuid",
 				product_uuid
 				);
 		if (ret)
