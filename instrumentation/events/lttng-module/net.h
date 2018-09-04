@@ -407,12 +407,18 @@ static struct lttng_event_field network_fields[] = {
 			.u._struct.fields = ipv6fields,
 		},
 	},
+	[3] = {
+		.name = "other",
+		.type = __type_integer(uint16_t, 0, 0, 0,
+				__BIG_ENDIAN, 16, none),
+	},
 };
 
 enum network_header_types {
 	NH_NONE,
 	NH_IPV4,
 	NH_IPV6,
+	NH_OTHER,
 };
 
 static inline unsigned char __get_network_header_type(struct sk_buff *skb)
@@ -423,6 +429,7 @@ static inline unsigned char __get_network_header_type(struct sk_buff *skb)
 		else if (skb->protocol == htons(ETH_P_IP))
 			return NH_IPV4;
 		/* Fallthrough for other header types. */
+		return NH_OTHER;
 	}
 	return NH_NONE;
 }
@@ -434,6 +441,7 @@ LTTNG_TRACEPOINT_ENUM(net_network_header,
 		ctf_enum_value("_unknown", NH_NONE)
 		ctf_enum_value("_ipv4", NH_IPV4)
 		ctf_enum_value("_ipv6", NH_IPV6)
+		ctf_enum_value("_other", NH_OTHER)
 	)
 )
 
@@ -488,7 +496,7 @@ LTTNG_TRACEPOINT_EVENT_CLASS(net_dev_template,
 			),
 			network_header,
 			ctf_custom_code(
-				bool has_network_header = false;
+				bool add_transport_header = false;
 
 				/* Copy the network header. */
 				switch (__get_network_header_type(skb)) {
@@ -496,15 +504,20 @@ LTTNG_TRACEPOINT_EVENT_CLASS(net_dev_template,
 					ctf_align(uint16_t)
 					ctf_array_type(uint8_t, ip_hdr(skb),
 							sizeof(struct iphdr))
-					has_network_header = true;
+					add_transport_header = true;
 					break;
 				}
 				case NH_IPV6: {
 					ctf_align(uint16_t)
 					ctf_array_type(uint8_t, ipv6_hdr(skb),
 							sizeof(struct ipv6hdr))
-					has_network_header = true;
+					add_transport_header = true;
 					break;
+				}
+				case NH_OTHER: {
+					ctf_align(uint16_t)
+					/* Add network header protocol. */
+					ctf_integer_type(uint16_t, skb->protocol)
 				}
 				default:
 					/*
@@ -514,7 +527,7 @@ LTTNG_TRACEPOINT_EVENT_CLASS(net_dev_template,
 					break;
 				}
 
-				if (has_network_header) {
+				if (add_transport_header) {
 					enum transport_header_types th_type =
 						__get_transport_header_type(skb);
 
